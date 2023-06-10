@@ -21,7 +21,7 @@ const contactScheme = Yup.object().shape({
     firstName: Yup.string().required("Required"),
     email: Yup.string().email("invalid email").required("Required"),
     type: Yup.string().required("Required"),
-    comment: Yup.string().required("Required"),
+    comment: Yup.string().min(25,"Must be at least 25 characters").required("Required"),
 });
 
 const initialValuesContact = {
@@ -35,12 +35,8 @@ const LandingSection = () => {
     const { isLoading, response, submit } = useSubmit();
     const { onOpen } = useAlertContext();
 
-
     const handleFormSubmit = async (values, event) => {
-        console.log(values)
-        // console.log(event)
         await submit('', values)
-        console.log(response);
         const { type = 'error', message = '' } = response
         onOpen(type, message);
         if (type === 'success')
@@ -53,6 +49,7 @@ const LandingSection = () => {
             backgroundColor="#512DA8"
             py={16}
             spacing={8}
+            id="contact-me-section"
         >
             <VStack w="1024px" p={32} alignItems="flex-start">
                 <Heading as="h1" id="contactme-section">

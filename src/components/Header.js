@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -33,7 +33,10 @@ const socials = [
 ];
 
 const Header = () => {
-    const handleClick = (anchor) => () => {
+    const [prevScroll, setPrevScroll] = useState(0);
+    const [transY, setTransY] = useState(0);
+
+    const handleClick = (anchor) => {
         const id = `${anchor}-section`;
         const element = document.getElementById(id);
         if (element) {
@@ -44,15 +47,39 @@ const Header = () => {
         }
     };
 
+    const handleScroll = () => {
+        const diff = prevScroll - window.scrollY;
+        if (diff > 0) {
+            // console.log('up', diff, prevScroll, window.scrollY)
+            setTransY(0);
+        }
+        else {
+            // console.log('down', diff, prevScroll, window.scrollY)
+            setTransY(-200);
+        }
+
+        setPrevScroll(window.scrollY)
+    };
+
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [prevScroll]);
+
+
     return (
         <Box
+            id="navtop"
             position="fixed"
             top={0}
             left={0}
             right={0}
-            translateY={0}
+            zIndex={1}
+            transform="auto"
+            translateY={transY}
             transitionProperty="transform"
-            transitionDuration=".3s"
+            transitionDuration="1s"
             transitionTimingFunction="ease-in-out"
             backgroundColor="#18181b"
         >
@@ -76,8 +103,8 @@ const Header = () => {
                     <nav>
                         <HStack spacing={8}>
                             {/* Add links to Projects and Contact me section */}
-                            <a href="#">Project</a>
-                            <a href="#">Contact me</a>
+                            <a href="/#project" onClick={(e) => { e.preventDefault(); handleClick('project'); }}>Project</a>
+                            <a href="/#contact-me" onClick={(e) => { e.preventDefault(); handleClick('contact-me'); }}>Contact me</a>
                         </HStack>
                     </nav>
                 </HStack>
